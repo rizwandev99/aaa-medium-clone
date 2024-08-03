@@ -16,6 +16,7 @@ node_modules/
 .wrangler
 wrangler.toml
 ./wrangler.toml
+/Users/john/Desktop/aaa-medium-clone/backend/wrangler.toml
 
 # env
 .env
