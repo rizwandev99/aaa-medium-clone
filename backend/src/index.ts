@@ -27,7 +27,7 @@ app.post("/api/v1/user/signup", async (c) => {
 
   const token = await sign({ user: user.id }, c.env.JWT_SECRET);
 
-  return c.json({ token });
+  return c.json({ msg: "Signed up successfully", token: token });
 
   // return c.text("Hello Hono!");
 });
@@ -46,9 +46,15 @@ app.post("/api/v1/user/signin", async (c) => {
     },
   });
 
+  if (!user) {
+    c.status(403);
+    return c.json({ msg: "Invalid user" });
+  }
   console.log(user);
 
-  return c.json({ user });
+  const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
+
+  return c.json({ jwt });
 });
 
 app.post("/api/v1/blog", (c) => {

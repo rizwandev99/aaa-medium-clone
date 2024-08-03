@@ -12,6 +12,10 @@
       "@cloudflare/workers-types"
     ],
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
+    "jsxImportSource": "hono/jsx",
+    "outDir": "./dist",
+    "rootDir": "./src"
   },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }
