@@ -42,18 +42,24 @@ app.post("/api/v1/user/signup", async (c) => {
 
   const body = await c.req.json();
 
-  const user = await prisma.user.create({
-    data: {
-      email: body.email,
-      password: body.password,
-    },
-  });
+  try {
+    const user = await prisma.user.create({
+      data: {
+        username: body.email,
+        password: body.password,
+        name: body.email,
+      },
+    });
+  } catch (e) {
+    c.status(411);
+    return c.text("Invalid");
+  }
 
-  const token = await sign({ user: user.id }, c.env.JWT_SECRET);
+  // const token = await sign({ user: user.id }, c.env.JWT_SECRET);
 
-  return c.json({ msg: "Signed up successfully", token: token });
+  // return c.json({ msg: "Signed up successfully", token: token });
 
-  // return c.text("Hello Hono!");
+  return c.text("Signed Up!!!");
 });
 
 app.post("/api/v1/user/signin", async (c) => {
@@ -65,7 +71,7 @@ app.post("/api/v1/user/signin", async (c) => {
 
   const user = await prisma.user.findUnique({
     where: {
-      email: body.email,
+      username: body.email,
       password: body.password,
     },
   });
