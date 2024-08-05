@@ -50,14 +50,14 @@ app.post("/api/v1/user/signup", async (c) => {
         name: body.email,
       },
     });
+
+    const token = await sign({ user: user.id }, c.env.JWT_SECRET);
+
+    return c.json({ msg: "Signed up successfully", token: token });
   } catch (e) {
     c.status(411);
     return c.text("Invalid");
   }
-
-  // const token = await sign({ user: user.id }, c.env.JWT_SECRET);
-
-  // return c.json({ msg: "Signed up successfully", token: token });
 
   return c.text("Signed Up!!!");
 });
