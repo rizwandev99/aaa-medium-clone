@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { sign, verify } from "hono/jwt";
+import { signinInput, signupInput } from "@rizwandev99/medium-common";
 
 export const userRouter = new Hono<{
   Bindings: {
@@ -17,10 +18,19 @@ userRouter.post("/signup", async (c) => {
 
   const body = await c.req.json();
 
+  const { success } = signupInput.safeParse(body);
+
+  if (!success) {
+    c.status(411);
+    return c.json({
+      msg: "Incorrect inputs",
+    });
+  }
+
   try {
     const user = await prisma.user.create({
       data: {
-        username: body.email,
+        username: body.username,
         password: body.password,
         name: body.email,
       },
@@ -31,10 +41,11 @@ userRouter.post("/signup", async (c) => {
     return c.json({ msg: "Signed up successfully", token: token });
   } catch (e) {
     c.status(411);
-    return c.text("Invalid");
+    return c.json({
+      msg: "db error",
+      error: e,
+    });
   }
-
-  return c.text("Signed Up!!!");
 });
 
 userRouter.post("/signin", async (c) => {
@@ -42,9 +53,17 @@ userRouter.post("/signin", async (c) => {
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  try {
-    const body = await c.req.json();
+  const body = await c.req.json();
 
+  const { success } = signinInput.safeParse(body);
+
+  if (!success) {
+    c.status(411);
+    return c.json({
+      msg: "Incorrect inputs",
+    });
+  }
+  try {
     const user = await prisma.user.findFirst({
       where: {
         username: body.email,

@@ -8,6 +8,7 @@
   "dependencies": {
     "@prisma/client": "^5.17.0",
     "@prisma/extension-accelerate": "^1.1.0",
+    "@rizwandev99/medium-common": "^1.0.2",
     "@types/node": "^22.1.0",
     "hono": "^4.5.3",
     "prisma": "^5.17.0",
