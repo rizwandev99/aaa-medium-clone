@@ -10,7 +10,7 @@ export const userRouter = new Hono<{
   };
 }>();
 
-userRouter.post("/api/v1/user/signup", async (c) => {
+userRouter.post("/signup", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -37,7 +37,7 @@ userRouter.post("/api/v1/user/signup", async (c) => {
   return c.text("Signed Up!!!");
 });
 
-userRouter.post("/api/v1/user/signin", async (c) => {
+userRouter.post("/signin", async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -57,8 +57,8 @@ userRouter.post("/api/v1/user/signin", async (c) => {
       return c.json({ msg: "Invalid user" });
     }
     console.log(user);
-    // const token = await sign({ user: user.id }, c.env.JWT_SECRET);
-    // return c.json({ msg: "Signed up successfully", token: token });
+    const token = await sign({ user: user.id }, c.env.JWT_SECRET);
+    return c.json({ msg: "Sign-IN successfully", token: token });
   } catch (e) {
     c.status(411);
     return c.text("Invalid");
