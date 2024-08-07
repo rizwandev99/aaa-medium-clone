@@ -1,9 +1,9 @@
-import { Hono } from "hono";
-import { PrismaClient } from "@prisma/client/edge";
-import { withAccelerate } from "@prisma/extension-accelerate";
-import { sign, verify } from "hono/jwt";
-import { Variables } from "hono/types";
-import { createBlogInput, updateBlogInput } from "@rizwandev99/medium-common";
+import { Hono } from 'hono';
+import { PrismaClient } from '@prisma/client/edge';
+import { withAccelerate } from '@prisma/extension-accelerate';
+import { sign, verify } from 'hono/jwt';
+import { Variables } from 'hono/types';
+import { createBlogInput, updateBlogInput } from '@rizwandev99/medium-common';
 
 export const blogRouter = new Hono<{
   Bindings: {
@@ -15,22 +15,22 @@ export const blogRouter = new Hono<{
   };
 }>();
 
-blogRouter.use("/*", async (c, next) => {
-  const auth = c.req.header("authorization") || " ";
+blogRouter.use('/*', async (c, next) => {
+  const auth = c.req.header('authorization') || ' ';
   const jwt = await verify(auth, c.env.JWT_SECRET);
 
   if (jwt) {
-    c.set("authorId", Number(jwt.user));
+    c.set('authorId', Number(jwt.user));
     await next();
   } else {
     c.status(403);
     return c.json({
-      msg: "Authentication Declined",
+      msg: 'Authentication Declined',
     });
   }
 });
 
-blogRouter.post("/", async (c) => {
+blogRouter.post('/', async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -41,10 +41,10 @@ blogRouter.post("/", async (c) => {
   if (!success) {
     c.status(411);
     return c.json({
-      msg: "Incorrect inputs",
+      msg: 'Incorrect inputs',
     });
   }
-  const authorId = c.get("authorId");
+  const authorId = c.get('authorId');
 
   try {
     const user = await prisma.blog.create({
@@ -55,18 +55,18 @@ blogRouter.post("/", async (c) => {
       },
     });
     return c.json({
-      msg: "Blog successfully created",
+      msg: 'Blog successfully created',
       id: user.id,
     });
   } catch (e) {
     return c.json({
-      msg: "Error",
+      msg: 'Error',
       error: e,
     });
   }
 });
 
-blogRouter.put("/", async (c) => {
+blogRouter.put('/', async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -77,7 +77,7 @@ blogRouter.put("/", async (c) => {
   if (!success) {
     c.status(411);
     return c.json({
-      msg: "Incorrect inputs",
+      msg: 'Incorrect inputs',
     });
   }
 
@@ -92,18 +92,18 @@ blogRouter.put("/", async (c) => {
       },
     });
     return c.json({
-      msg: "Blog successfully created",
+      msg: 'Blog successfully created',
       body: user,
     });
   } catch (e) {
     return c.json({
-      msg: "Error",
+      msg: 'Error',
       error: e,
     });
   }
 });
 
-blogRouter.get("/bulk", async (c) => {
+blogRouter.get('/bulk', async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -111,37 +111,58 @@ blogRouter.get("/bulk", async (c) => {
   // const body = await c.req.json();
 
   try {
-    const user = await prisma.blog.findMany({});
+    const user = await prisma.blog.findMany({
+      select: {
+        content: true,
+        title: true,
+        id: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
     return c.json({
-      msg: "Blog successfully created",
+      msg: 'Blog successfully created',
       blogs: user,
     });
   } catch (e) {
     return c.json({
-      msg: "Error",
+      msg: 'Error',
       error: e,
     });
   }
 });
 
-blogRouter.get("/:id", async (c) => {
+blogRouter.get('/:id', async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
-  const id = c.req.param("id");
+  const id = c.req.param('id');
   try {
     const user = await prisma.blog.findFirst({
       where: {
         id: Number(id),
       },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
     return c.json({
-      msg: "Blog fetched created",
+      msg: 'Blog fetched created',
       blog: user,
     });
   } catch (e) {
     return c.json({
-      msg: "Error",
+      msg: 'Error',
       error: e,
     });
   }

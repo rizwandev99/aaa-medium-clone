@@ -1,36 +1,43 @@
+import { Link } from 'react-router-dom';
+
 interface BlogCardProps {
   authorName: string;
   title: string;
   content: string;
   publishedDate: string;
+  id: number;
 }
+
 export const BlogCard = ({
   authorName,
   title,
   content,
   publishedDate,
+  id,
 }: BlogCardProps) => {
   return (
-    <div className='border-b border-slate-300 p-2 max-w-lg '>
-      <div className='flex items-center pb-2'>
-        <div className='flex'>
-          <Avatar author={authorName} />
+    <Link to={`/blog/${id}`}>
+      <div className='border-b border-slate-300 p-2 max-w-lg w-screen'>
+        <div className='flex items-center pb-2'>
+          <div className='flex'>
+            <Avatar author={authorName} />
+          </div>
+          <div className='font-extralight pl-2'>{authorName}</div>
+          <div className='pl-2'>
+            <Circle />
+          </div>
+          <div className='font-thin pl-2 text-slate-400'>{publishedDate}</div>
         </div>
-        <div className='font-extralight pl-2'>{authorName}</div>
-        <div className='pl-2'>
-          <Circle />
-        </div>
-        <div className='font-thin pl-2 text-slate-400'>{publishedDate}</div>
-      </div>
 
-      <div className='font-bold text-xl'>{title}</div>
-      <div className='pt-2 font-light text-lg'>
-        {content.slice(0, 200) + '...'}
+        <div className='font-bold text-xl'>{title}</div>
+        <div className='pt-2 font-light text-lg'>
+          {content.slice(0, 200) + '...'}
+        </div>
+        <div className='text-slate-400 text-sm pt-2'>{`${Math.ceil(
+          content.length / 100
+        )} mins read`}</div>
       </div>
-      <div className='text-slate-400 text-sm pt-2'>{`${Math.ceil(
-        content.length / 100
-      )} mins read`}</div>
-    </div>
+    </Link>
   );
 };
 

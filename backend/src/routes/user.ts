@@ -1,17 +1,17 @@
-import { Hono } from "hono";
-import { PrismaClient } from "@prisma/client/edge";
-import { withAccelerate } from "@prisma/extension-accelerate";
-import { sign, verify } from "hono/jwt";
-import { signinInput, signupInput } from "@rizwandev99/medium-common";
+import { Hono } from 'hono';
+import { PrismaClient } from '@prisma/client/edge';
+import { withAccelerate } from '@prisma/extension-accelerate';
+import { sign, verify } from 'hono/jwt';
+import { signinInput, signupInput } from '@rizwandev99/medium-common';
 
 export const userRouter = new Hono<{
   Bindings: {
-    DATABASE_URL: "string";
-    JWT_SECRET: "string";
+    DATABASE_URL: 'string';
+    JWT_SECRET: 'string';
   };
 }>();
 
-userRouter.post("/signup", async (c) => {
+userRouter.post('/signup', async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -23,7 +23,7 @@ userRouter.post("/signup", async (c) => {
   if (!success) {
     c.status(411);
     return c.json({
-      msg: "Incorrect inputs",
+      msg: 'Incorrect inputs',
     });
   }
 
@@ -38,17 +38,17 @@ userRouter.post("/signup", async (c) => {
 
     const token = await sign({ user: user.id }, c.env.JWT_SECRET);
 
-    return c.json({ msg: "Signed up successfully", token: token });
+    return c.json({ msg: 'Signed up successfully', token: token });
   } catch (e) {
     c.status(411);
     return c.json({
-      msg: "db error",
+      msg: 'db error',
       error: e,
     });
   }
 });
 
-userRouter.post("/signin", async (c) => {
+userRouter.post('/signin', async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -60,7 +60,7 @@ userRouter.post("/signin", async (c) => {
   if (!success) {
     c.status(411);
     return c.json({
-      msg: "Incorrect inputs",
+      msg: 'Incorrect inputs',
     });
   }
   try {
@@ -73,15 +73,13 @@ userRouter.post("/signin", async (c) => {
 
     if (!user) {
       c.status(403);
-      return c.json({ msg: "Invalid user" });
+      return c.json({ msg: 'Invalid user' });
     }
     console.log(user);
     const token = await sign({ user: user.id }, c.env.JWT_SECRET);
-    return c.json({ msg: "Sign-IN successfully", token: token });
+    return c.json({ msg: 'Sign-IN successfully', token: token });
   } catch (e) {
     c.status(411);
-    return c.text("Invalid");
+    return c.text('Invalid');
   }
-
-  return c.text("Sign-IN Successfully");
 });
