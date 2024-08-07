@@ -13,7 +13,7 @@ export interface Blog {
 
 export const useBlogs = () => {
   const [loading, setLoading] = useState(true);
-  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [blogs, setBlogs] = useState<Blog | null>(null);
 
   useEffect(() => {
     axios
