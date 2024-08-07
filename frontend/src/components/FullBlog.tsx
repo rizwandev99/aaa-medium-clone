@@ -18,8 +18,10 @@ export const FullBlog = ({ blog }: { blog: Blog }) => {
               <Avatar author={blog.author.name || 'Anonymous'} />
             </div>
             <div>
-              <div className='text-xl font-bold'>{blog.author.name}</div>
-              <div>{blog.content}</div>
+              <div className='text-xl font-bold'>
+                {blog.author.name || 'Anonymous'}
+              </div>
+              <div>{blog.title}</div>
             </div>
           </div>
         </div>

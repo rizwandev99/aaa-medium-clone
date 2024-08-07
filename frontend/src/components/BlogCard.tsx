@@ -41,7 +41,7 @@ export const BlogCard = ({
   );
 };
 
-function Circle() {
+export function Circle() {
   return <div className='h-1 w-1 bg-slate-400 rounded-full'></div>;
 }
 

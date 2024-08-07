@@ -59,7 +59,7 @@ export const Auth = ({ type }: { type: 'signup' | 'signin' }) => {
 
         <LabelledInput
           label='Username'
-          placeholder='Harkirat@gmail.com'
+          placeholder='rizwandev99@gmail.com'
           type='text'
           onChange={(e) => {
             setPostInputs({
