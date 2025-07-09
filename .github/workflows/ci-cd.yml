@@ -1,0 +1,64 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Root Dependencies
+        run: npm ci || true
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Lint Frontend
+        run: |
+          cd frontend
+          npm run lint || true
+
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Build Backend
+        run: |
+          cd backend
+          npm run build || true
+
+      - name: Lint Backend
+        run: |
+          cd backend
+          npm run lint || true
+
+      # --- Deployment Placeholder ---
+      # Add deployment steps here (e.g., Cloudflare Workers, Vercel, etc.)
+      # Example for Cloudflare Workers (requires secrets):
+      # - name: Deploy Backend to Cloudflare Workers
+      #   run: |
+      #     cd backend
+      #     npx wrangler deploy
+      #   env:
+      #     CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }} 
